@@ -1,5 +1,6 @@
 using MinhaApi.Models;
 using MinhaApi.Services;
+using MinhaApi.Dtos;
 
 namespace MinhaApi.Endpoints;
 

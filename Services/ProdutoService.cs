@@ -1,4 +1,7 @@
 using MinhaApi.Models;
+using MinhaApi.Dtos;
+using Microsoft.EntityFrameworkCore;
+
 namespace MinhaApi.Services;
 
 public class ProdutoService
@@ -10,25 +13,46 @@ public class ProdutoService
         this.context = context;
     }
 
-    public List<Produto> GetProdutos()
+    public List<ProdutoDto> GetProdutos()
     {
-        return context.Produtos.ToList();
+        return context.Produtos.Include(p => p.Categoria).Select(p => new ProdutoDto
+        {
+            Id = p.Id,
+            Nome = p.Nome,
+            Preco = p.Preco,
+            Categoria = p.Categoria.Nome
+            }).ToList();
     }
 
-    public Produto? GetProdutoPorId(int id)
+    public ProdutoDto? GetProdutoPorId(int id)
     {
-        return context.Produtos.Find(id);
+        return context.Produtos.Include(p => p.Categoria)
+    .Where(p => p.Id == id)
+    .Select(p => new ProdutoDto
+    {
+        Id = p.Id,
+        Nome = p.Nome,
+        Preco = p.Preco,
+        Categoria = p.Categoria.Nome
+    })
+    .FirstOrDefault();
     }
 
-    public Produto AddProduto(Produto produto)
+    public ProdutoDto AddProduto(Produto produto)
     {
         context.Produtos.Add(produto);
         context.SaveChanges();
 
-        return produto;
+        return new ProdutoDto
+        {
+        Id = produto.Id,
+        Nome = produto.Nome,
+        Preco = produto.Preco,
+        Categoria = produto.Categoria.Nome
+        };
     }
 
-    public Produto? UpdateProduto(int id, Produto produtoAtualizado)
+    public ProdutoDto? UpdateProduto(int id, Produto produtoAtualizado)
     {
         var produto = context.Produtos.Find(id);
 
@@ -38,13 +62,21 @@ public class ProdutoService
         }
         produto.Nome = produtoAtualizado.Nome;
         produto.Preco= produtoAtualizado.Preco;
+        produto.CategoriaId = produtoAtualizado.CategoriaId;
         context.SaveChanges();
 
-        return produto;
-    }
-    public Produto? UpdateParcialmenteProduto(int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente)
+        return new ProdutoDto
     {
-        var produto = context.Produtos.Find(id);
+        Id = produto.Id,
+        Nome = produto.Nome,
+        Preco = produto.Preco,
+        Categoria = produto.Categoria.Nome
+    };
+    }
+    public ProdutoDto? UpdateParcialmenteProduto(int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente)
+    {
+        var produto = context.Produtos.Include(p => p.Categoria)
+        .FirstOrDefault(p => p.Id == id);;
 
         if (produto is null)
             return null;
@@ -56,7 +88,13 @@ public class ProdutoService
             produto.Preco = produtoAtualizadoParcialmente.Preco.Value;
         context.SaveChanges();
 
-        return produto;
+        return new ProdutoDto
+    {
+        Id = produto.Id,
+        Nome = produto.Nome,
+        Preco = produto.Preco,
+        Categoria = produto.Categoria.Nome
+    };
 
     }
 
