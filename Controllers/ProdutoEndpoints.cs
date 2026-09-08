@@ -1,6 +1,7 @@
 using MinhaApi.Models;
 using MinhaApi.Services;
 using MinhaApi.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace MinhaApi.Endpoints;
 
@@ -24,43 +25,114 @@ public static class ProdutoEndpoints
         
     });
 
-    app.MapPost("/produtos", (CriarProdutoDto produto, ProdutoService service) =>
+    app.MapPost("/produtos", (CriarProdutoDto dto, ProdutoService service) =>
     {
-        var novoProduto = new Produto(
-        produto.Nome,
-        produto.Preco,
-        produto.CategoriaId
+        var contexto = new ValidationContext(dto);
+        var erros = new List<ValidationResult>();
+        var valido = Validator.TryValidateObject(
+            dto,
+            contexto,
+            erros,
+            validateAllProperties: true
+        );
+        if (!valido)
+        {
+            return Results.BadRequest(erros);
+        }
+        if (!service.CategoriaExiste(dto.CategoriaId))
+        {
+            return Results.BadRequest("Categoria não encontrada");
+        }
+        if (service.ProdutoExiste(dto.Nome))
+        {
+            return Results.Conflict("Já existe um produto com esse nome");
+        }
+
+        var produto = new Produto(
+        dto.Nome,
+        dto.Preco,
+        dto.CategoriaId
     );
-        service.AddProduto(novoProduto);
+        var novoProduto = service.AddProduto(produto);
         return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
     });
     
-    app.MapPut("/produtos/{id}", (int id, AtualizarProdutoDto produtoAtualizado, ProdutoService service) =>
+    app.MapPut("/produtos/{id}", (int id, AtualizarProdutoDto dto, ProdutoService service) =>
     {
-    var produto = new Produto(
-        produtoAtualizado.Nome,
-        produtoAtualizado.Preco,
-        produtoAtualizado.CategoriaId
-    );
-    var produtoAtualizadoBanco = service.UpdateProduto(id, produto);
+        var contexto = new ValidationContext(dto);
+        var erros = new List<ValidationResult>();
+        var valido = Validator.TryValidateObject(
+            dto,
+            contexto,
+            erros,
+            validateAllProperties: true
+        );
+        if (!valido)
+        {
+            return Results.BadRequest(erros);
+        }
+         if (!service.CategoriaExiste(dto.CategoriaId))
+        {
+            return Results.BadRequest("Categoria não encontrada");
+        }
+        if (service.ProdutoExiste(dto.Nome))
+        {
+            return Results.Conflict("Já existe um produto com esse nome");
+        }
 
-    if (produtoAtualizadoBanco is null)
+        var produto = new Produto(
+            dto.Nome,
+            dto.Preco,
+            dto.CategoriaId
+        );
+
+        var produtoAtualizadoBanco = service.UpdateProduto(id, produto);
+
+        if (produtoAtualizadoBanco is null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.Ok(produtoAtualizadoBanco);
+        });
+
+    app.MapPatch("/produtos/{id}", (int id, ProdutoAtualizadoParcialmenteDto dto, ProdutoService service) =>
     {
-        return Results.NotFound();
-    }
+        if (dto.Nome is null && dto.Preco is null)
+        {
+            return Results.BadRequest("Nenhum campo informado para atualização");
+        }
+        var contexto = new ValidationContext(dto);
+        var erros = new List<ValidationResult>();
 
-    return Results.Ok(produtoAtualizadoBanco);
-    });
+        var valido = Validator.TryValidateObject(
+            dto,
+            contexto,
+            erros,
+            validateAllProperties: true
+        );
 
-    app.MapPatch("/produtos/{id}", (int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente, ProdutoService service) =>
-    {
-        var produto = service.UpdateParcialmenteProduto(id, produtoAtualizadoParcialmente);
+        if (!valido)
+        {
+            return Results.BadRequest(erros);
+        }
 
+        // Verifica se o produto existe
+        var produto = service.GetProdutoPorId(id);
         if (produto is null)
         {
             return Results.NotFound();
         }
-        return Results.Ok(produto);
+
+        if (dto.Nome is not null && service.ProdutoExisteParcial(id, dto.Nome))
+        {
+            return Results.Conflict("Já existe outro produto com esse nome");
+        }
+
+        var produtoAtualizado = service.UpdateParcialmenteProduto(id, dto);
+
+        
+        return Results.Ok(produtoAtualizado);
     });
 
     app.MapDelete("/produtos/{id}", (int id, ProdutoService service) =>

@@ -16,6 +16,7 @@ public class Produto
         this.Preco = Preco;
         this.CategoriaId = CategoriaId;
     }
+    
 }
 
 

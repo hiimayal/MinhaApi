@@ -107,4 +107,19 @@ public class ProdutoService
         context.SaveChanges();
         return produto;
     }
+
+    public bool CategoriaExiste(int categoriaId)
+    {
+        return context.Categorias.Any(c => c.Id == categoriaId);
+    }   
+
+    public bool ProdutoExiste(string nome)
+    {
+        return context.Produtos.Any(p => p.Nome == nome);
+    }
+
+    public bool ProdutoExisteParcial(int id, string nome)
+{
+    return context.Produtos.Any(p => p.Nome == nome && p.Id != id);
+}
 }
