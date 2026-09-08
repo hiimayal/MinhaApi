@@ -1,8 +1,8 @@
 # Minha API de Produtos
 
-API REST desenvolvida em C# com ASP.NET Core.
+API REST desenvolvida em C# com ASP.NET Core para gerenciamento de produtos e categorias.
 
-## Tecnologias
+## 🚀 Tecnologias
 
 - C#
 - .NET 8
@@ -10,8 +10,9 @@ API REST desenvolvida em C# com ASP.NET Core.
 - Entity Framework Core
 - SQL Server
 - Swagger
+- Git/GitHub
 
-## Funcionalidades
+## 📌 Funcionalidades
 
 - Listar produtos
 - Buscar produto por ID
@@ -20,8 +21,15 @@ API REST desenvolvida em C# com ASP.NET Core.
 - Atualizar parcialmente um produto
 - Excluir produto
 - Relacionamento entre produtos e categorias
+- Persistência de dados com SQL Server
 
-## Sobre o projeto
+## 🏗️ Estrutura do projeto
 
-Projeto desenvolvido para praticar desenvolvimento de APIs REST
-com C#, ASP.NET Core, Entity Framework Core e SQL Server.
+```text
+MinhaApi/
+├── Controllers/
+├── DTOs/
+├── Models/
+├── Services/
+├── LojaDbContext/
+└── Program.cs
