@@ -1,6 +1,7 @@
 using MinhaApi.Services;
 using MinhaApi.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using MinhaApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Swagger só em desenvolvimento
 if (app.Environment.IsDevelopment())
