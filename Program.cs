@@ -1,6 +1,7 @@
 using MinhaApi.Services;
 using MinhaApi.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using MinhaApi.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<ProdutoService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 

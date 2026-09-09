@@ -1,10 +1,11 @@
 using MinhaApi.Models;
 using MinhaApi.Dtos;
 using Microsoft.EntityFrameworkCore;
+using MinhaApi.Interfaces;
 
 namespace MinhaApi.Services;
 
-public class ProdutoService
+public class ProdutoService : IProdutoService
 {
     private readonly LojaDbContext context;
 
@@ -43,6 +44,10 @@ public class ProdutoService
         context.Produtos.Add(produto);
         await context.SaveChangesAsync();
 
+        var produtoComCategoria = await context.Produtos
+        .Include(p => p.Categoria)
+        .FirstAsync(p => p.Id == produto.Id);
+
         return new ProdutoDto
         {
         Id = produto.Id,
@@ -64,6 +69,10 @@ public class ProdutoService
         produto.Preco= produtoAtualizado.Preco;
         produto.CategoriaId = produtoAtualizado.CategoriaId;
         await context.SaveChangesAsync();
+
+        var produtoComCategoria = await context.Produtos
+        .Include(p => p.Categoria)
+        .FirstAsync(p => p.Id == id);
 
         return new ProdutoDto
     {
