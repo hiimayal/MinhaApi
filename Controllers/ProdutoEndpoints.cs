@@ -9,14 +9,15 @@ public static class ProdutoEndpoints
 {
     public static void MapProdutoEndpoints(this WebApplication app)
 {
-    app.MapGet("/produtos", (ProdutoService service) =>
+    app.MapGet("/produtos", async (ProdutoService service) =>
     {
-        return service.GetProdutos();
+        var produtos = await service.GetProdutos();
+        return Results.Ok(produtos);
     });
 
-    app.MapGet("/produtos/{id}", (int id, ProdutoService service) =>
+    app.MapGet("/produtos/{id}", async (int id, ProdutoService service) =>
     {
-        var produto = service.GetProdutoPorId(id);
+        var produto = await service.GetProdutoPorId(id);
         if (produto is null)
         {
             return Results.NotFound("Produto não encontrado");
@@ -25,7 +26,7 @@ public static class ProdutoEndpoints
         
     });
 
-    app.MapPost("/produtos", (CriarProdutoDto dto, ProdutoService service) =>
+    app.MapPost("/produtos", async (CriarProdutoDto dto, ProdutoService service) =>
     {
         var contexto = new ValidationContext(dto);
         var erros = new List<ValidationResult>();
@@ -53,11 +54,11 @@ public static class ProdutoEndpoints
         dto.Preco,
         dto.CategoriaId
     );
-        var novoProduto = service.AddProduto(produto);
+        var novoProduto = await service.AddProduto(produto);
         return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
     });
     
-    app.MapPut("/produtos/{id}", (int id, AtualizarProdutoDto dto, ProdutoService service) =>
+    app.MapPut("/produtos/{id}", async (int id, AtualizarProdutoDto dto, ProdutoService service) =>
     {
         var contexto = new ValidationContext(dto);
         var erros = new List<ValidationResult>();
@@ -86,7 +87,7 @@ public static class ProdutoEndpoints
             dto.CategoriaId
         );
 
-        var produtoAtualizadoBanco = service.UpdateProduto(id, produto);
+        var produtoAtualizadoBanco = await service.UpdateProduto(id, produto);
 
         if (produtoAtualizadoBanco is null)
         {
@@ -96,7 +97,7 @@ public static class ProdutoEndpoints
         return Results.Ok(produtoAtualizadoBanco);
         });
 
-    app.MapPatch("/produtos/{id}", (int id, ProdutoAtualizadoParcialmenteDto dto, ProdutoService service) =>
+    app.MapPatch("/produtos/{id}", async (int id, ProdutoAtualizadoParcialmenteDto dto, ProdutoService service) =>
     {
         if (dto.Nome is null && dto.Preco is null)
         {
@@ -129,15 +130,15 @@ public static class ProdutoEndpoints
             return Results.Conflict("Já existe outro produto com esse nome");
         }
 
-        var produtoAtualizado = service.UpdateParcialmenteProduto(id, dto);
+        var produtoAtualizado = await service.UpdateParcialmenteProduto(id, dto);
 
         
         return Results.Ok(produtoAtualizado);
     });
 
-    app.MapDelete("/produtos/{id}", (int id, ProdutoService service) =>
+    app.MapDelete("/produtos/{id}", async (int id, ProdutoService service) =>
     {
-        var produto = service.DeleteProduto(id);
+        var produto = await service.DeleteProduto(id);
         if (produto is null)
         {
             return Results.NotFound();

@@ -13,35 +13,35 @@ public class ProdutoService
         this.context = context;
     }
 
-    public List<ProdutoDto> GetProdutos()
+    public async Task<List<ProdutoDto>> GetProdutos()
     {
-        return context.Produtos.Include(p => p.Categoria).Select(p => new ProdutoDto
+        return await context.Produtos.Include(p => p.Categoria).Select(p => new ProdutoDto
         {
             Id = p.Id,
             Nome = p.Nome,
             Preco = p.Preco,
             Categoria = p.Categoria.Nome
-            }).ToList();
+            }).ToListAsync();
     }
 
-    public ProdutoDto? GetProdutoPorId(int id)
+    public async Task<ProdutoDto?> GetProdutoPorId(int id)
     {
-        return context.Produtos.Include(p => p.Categoria)
-    .Where(p => p.Id == id)
-    .Select(p => new ProdutoDto
-    {
-        Id = p.Id,
-        Nome = p.Nome,
-        Preco = p.Preco,
-        Categoria = p.Categoria.Nome
-    })
-    .FirstOrDefault();
+        return await context.Produtos.Include(p => p.Categoria)
+        .Where(p => p.Id == id)
+        .Select(p => new ProdutoDto
+        {
+            Id = p.Id,
+            Nome = p.Nome,
+            Preco = p.Preco,
+            Categoria = p.Categoria.Nome
+        })
+        .FirstOrDefaultAsync();
     }
 
-    public ProdutoDto AddProduto(Produto produto)
+    public async Task<ProdutoDto> AddProduto(Produto produto)
     {
         context.Produtos.Add(produto);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         return new ProdutoDto
         {
@@ -52,9 +52,9 @@ public class ProdutoService
         };
     }
 
-    public ProdutoDto? UpdateProduto(int id, Produto produtoAtualizado)
+    public async Task<ProdutoDto?> UpdateProduto(int id, Produto produtoAtualizado)
     {
-        var produto = context.Produtos.Find(id);
+        var produto = await context.Produtos.FindAsync(id);
 
         if (produto is null)
         {
@@ -63,7 +63,7 @@ public class ProdutoService
         produto.Nome = produtoAtualizado.Nome;
         produto.Preco= produtoAtualizado.Preco;
         produto.CategoriaId = produtoAtualizado.CategoriaId;
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         return new ProdutoDto
     {
@@ -73,10 +73,10 @@ public class ProdutoService
         Categoria = produto.Categoria.Nome
     };
     }
-    public ProdutoDto? UpdateParcialmenteProduto(int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente)
+    public async Task<ProdutoDto?> UpdateParcialmenteProduto(int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente)
     {
-        var produto = context.Produtos.Include(p => p.Categoria)
-        .FirstOrDefault(p => p.Id == id);;
+        var produto = await context.Produtos.Include(p => p.Categoria)
+        .FirstOrDefaultAsync(p => p.Id == id);;
 
         if (produto is null)
             return null;
@@ -86,7 +86,7 @@ public class ProdutoService
 
         if (produtoAtualizadoParcialmente.Preco is not null)
             produto.Preco = produtoAtualizadoParcialmente.Preco.Value;
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         return new ProdutoDto
     {
@@ -98,13 +98,13 @@ public class ProdutoService
 
     }
 
-    public Produto? DeleteProduto(int id)
+    public async Task<Produto?> DeleteProduto(int id)
     {
-        var produto = context.Produtos.Find(id);
+        var produto = await context.Produtos.FindAsync(id);
         if (produto is null)
             return null;
         context.Produtos.Remove(produto);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return produto;
     }
 
