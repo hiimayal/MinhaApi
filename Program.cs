@@ -49,3 +49,4 @@ app.MapControllers();        // Controllers
 app.MapProdutoEndpoints();   // Minimal APIs
 
 app.Run();
+public partial class Program { }

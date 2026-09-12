@@ -135,4 +135,44 @@ public class ProdutoServiceTests
         Assert.Equal(100, resultado.Preco);
         Assert.Equal("Eletrônicos", resultado.Categoria);
     }
+
+    [Fact]
+    public async Task DeveAtualizarProduto()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<LojaDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new LojaDbContext(options);
+
+        var categoria = new Categoria
+        {
+            Id = 1,
+            Nome = "Eletrônicos"
+        };
+
+        var produto = new Produto("Teclado", 100, 1)
+        {
+            Id = 1,
+            Categoria = categoria
+        };
+
+        context.Categorias.Add(categoria);
+        context.Produtos.Add(produto);
+        await context.SaveChangesAsync();
+
+        var service = new ProdutoService(context);
+
+        var produtoAtualizado = new Produto("Mouse", 150, 1);
+
+        // Act
+        var resultado = await service.UpdateProduto(1, produtoAtualizado);
+
+        // Assert
+        Assert.NotNull(resultado);
+        Assert.Equal("Mouse", resultado.Nome);
+        Assert.Equal(150, resultado.Preco);
+        Assert.Equal("Eletrônicos", resultado.Categoria);
+    }
 }
