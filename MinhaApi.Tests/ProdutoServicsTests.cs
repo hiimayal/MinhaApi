@@ -97,7 +97,7 @@ public class ProdutoServiceTests
         var resultado = await service.GetProdutos();
 
         // Assert
-        Assert.Equal(1, resultado.Count);
+        Assert.Single(resultado);
         Assert.Contains(resultado, p => p.Nome == "mouse");
     }
 
