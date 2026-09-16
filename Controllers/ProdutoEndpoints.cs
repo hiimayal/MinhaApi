@@ -41,14 +41,6 @@ public static class ProdutoEndpoints
         {
             return Results.BadRequest(erros);
         }
-        if (!service.CategoriaExiste(dto.CategoriaId))
-        {
-            return Results.BadRequest("Categoria não encontrada");
-        }
-        if (service.ProdutoExiste(dto.Nome))
-        {
-            return Results.Conflict("Já existe um produto com esse nome");
-        }
 
         var produto = new Produto(
         dto.Nome,
@@ -73,15 +65,7 @@ public static class ProdutoEndpoints
         {
             return Results.BadRequest(erros);
         }
-         if (!service.CategoriaExiste(dto.CategoriaId))
-        {
-            return Results.BadRequest("Categoria não encontrada");
-        }
-        if (service.ProdutoExisteParcial(id, dto.Nome))
-        {
-            return Results.Conflict("Já existe um produto com esse nome");
-        }
-
+        
         var produto = new Produto(
             dto.Nome,
             dto.Preco,
@@ -119,16 +103,10 @@ public static class ProdutoEndpoints
             return Results.BadRequest(erros);
         }
 
-        // Verifica se o produto existe
         var produto = await service.GetProdutoPorId(id);
         if (produto is null)
         {
             return Results.NotFound();
-        }
-
-        if (dto.Nome is not null && service.ProdutoExisteParcial(id, dto.Nome))
-        {
-            return Results.Conflict("Já existe outro produto com esse nome");
         }
 
         var produtoAtualizado = await service.UpdateParcialmenteProduto(id, dto);

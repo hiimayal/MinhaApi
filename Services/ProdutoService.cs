@@ -41,6 +41,16 @@ public class ProdutoService : IProdutoService
 
     public async Task<ProdutoDto> AddProduto(Produto produto)
     {
+
+        if (!CategoriaExiste(produto.CategoriaId))
+        {
+            throw new Exception ("Categoria não encontrada");
+        }
+        if (ProdutoExiste(produto.Nome))
+        {
+             throw new Exception("Já existe um produto com esse nome");
+        }
+
         context.Produtos.Add(produto);
         await context.SaveChangesAsync();
 
@@ -65,6 +75,12 @@ public class ProdutoService : IProdutoService
         {
             return null;
         }
+
+        if (!CategoriaExiste(produtoAtualizado.CategoriaId))
+        {
+            throw new Exception ("Categoria não encontrada");
+        }
+        
         produto.Nome = produtoAtualizado.Nome;
         produto.Preco= produtoAtualizado.Preco;
         produto.CategoriaId = produtoAtualizado.CategoriaId;
@@ -89,12 +105,19 @@ public class ProdutoService : IProdutoService
 
         if (produto is null)
             return null;
+
+        if (produtoAtualizadoParcialmente.Nome is not null &&
+        ProdutoExisteParcial(id, produtoAtualizadoParcialmente.Nome))
+        {
+            throw new Exception("Já existe outro produto com esse nome");
+        }
     
         if (produtoAtualizadoParcialmente.Nome is not null)
             produto.Nome = produtoAtualizadoParcialmente.Nome;
 
         if (produtoAtualizadoParcialmente.Preco is not null)
             produto.Preco = produtoAtualizadoParcialmente.Preco.Value;
+            
         await context.SaveChangesAsync();
 
         return new ProdutoDto
