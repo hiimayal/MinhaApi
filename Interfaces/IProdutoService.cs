@@ -13,9 +13,7 @@ public interface IProdutoService
 
     Task<ProdutoDto?> UpdateProduto(int id, Produto produtoAtualizado);
 
-    Task<ProdutoDto?> UpdateParcialmenteProduto(
-        int id,
-        ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente);
+    Task<ProdutoDto?> UpdateParcialmenteProduto(int id, ProdutoAtualizadoParcialmenteDto produtoAtualizadoParcialmente);
 
     Task<Produto?> DeleteProduto(int id);
 

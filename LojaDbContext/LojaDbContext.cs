@@ -9,6 +9,7 @@ public class LojaDbContext : DbContext
     }
     public DbSet<Produto> Produtos { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
+    public DbSet<Usuario> Usuarios {get; set;}
     //Configuração explicita
      protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
