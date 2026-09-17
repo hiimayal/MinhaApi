@@ -1,5 +1,4 @@
 using MinhaApi.Models;
-using MinhaApi.Services;
 using MinhaApi.Dtos;
 using System.ComponentModel.DataAnnotations;
 using MinhaApi.Interfaces;

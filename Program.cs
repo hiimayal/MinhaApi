@@ -2,6 +2,7 @@ using MinhaApi.Services;
 using MinhaApi.Endpoints;
 using Microsoft.EntityFrameworkCore;
 using MinhaApi.Interfaces;
+using MinhaApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 var app = builder.Build();
 
@@ -44,9 +46,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowSwagger");
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Endpoints
 app.MapControllers();        // Controllers
-app.MapProdutoEndpoints();   // Minimal APIs
+app.MapProdutoEndpoints();  
+app.MapUsuarioEndpoints(); // Minimal APIs
 
 app.Run();
 public partial class Program { }

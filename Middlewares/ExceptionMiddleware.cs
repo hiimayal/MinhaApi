@@ -1,4 +1,5 @@
 using System.Text.Json;
+using MinhaApi.Exceptions;
 
 namespace MinhaApi.Middlewares;
 
@@ -17,8 +18,23 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
+         catch (EmailJaCadastradoException)
+        {
+            context.Response.StatusCode = 409;
+            context.Response.ContentType = "application/json";
+
+            var resposta = new
+            {
+                erro = "E-mail já cadastrado."
+            };
+
+            await context.Response.WriteAsync(
+                JsonSerializer.Serialize(resposta)
+            );
+        }
         catch (Exception)
         {
+
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
 
