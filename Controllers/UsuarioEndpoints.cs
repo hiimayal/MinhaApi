@@ -34,5 +34,28 @@ public static class UsuarioEndpoints
             var usuarioCriado = await service.CriarUsuario(usuario);
             return Results.Created("/usuarios", usuarioCriado);
         });
+
+         app.MapPost("/login", async (LoginRequest login, IUsuarioService service) =>
+         {
+             var contexto = new ValidationContext(login);
+            var erros = new List<ValidationResult>();
+
+            var valido = Validator.TryValidateObject(
+                login,
+                contexto,
+                erros,
+                validateAllProperties: true
+            );
+            if (!valido)
+            {
+                return Results.BadRequest(erros);
+            }
+
+            var resposta = await service.LoginUsuario(login);
+            return Results.Ok(resposta);
+
+         });
     }
 }
+
+       

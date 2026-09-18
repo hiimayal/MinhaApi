@@ -2,15 +2,19 @@ using MinhaApi.Models;
 using MinhaApi.Dtos;
 using MinhaApi.Interfaces;
 using MinhaApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MinhaApi.Services;
 
 public class UsuarioService : IUsuarioService
 {
     private readonly LojaDbContext context;
-    public UsuarioService(LojaDbContext context)
+    private readonly JwtService jwtService;
+
+    public UsuarioService(LojaDbContext context, JwtService jwtService)
     {
         this.context = context;
+        this.jwtService = jwtService;
     }
 
     public async Task<UsuarioResponse> CriarUsuario(Usuario usuario)
@@ -30,7 +34,33 @@ public class UsuarioService : IUsuarioService
         };
     }
 
-    public bool UsuarioExiste(string email)
+    public async Task<LoginResponse> LoginUsuario(LoginRequest login)
+    {
+        var usuario = await context.Usuarios.FirstOrDefaultAsync(u => u.Email == login.Email);
+
+        if (usuario == null)
+        {
+            throw new Exception("E-mail ou senha inválidos.");
+        }
+
+        bool senhaCorreta = BCrypt.Net.BCrypt.Verify(
+            login.Senha,
+            usuario.SenhaHash
+        );
+
+        if (!senhaCorreta)
+        {
+            throw new Exception("E-mail ou senha inválidos.");
+        }
+        var token = jwtService.GerarToken(usuario);
+        return new LoginResponse
+        {
+            Token = token
+        };
+
+    }
+
+    private bool UsuarioExiste(string email)
     {
         return context.Usuarios.Any(u => u.Email == email);
     }   

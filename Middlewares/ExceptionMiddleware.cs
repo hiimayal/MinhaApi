@@ -32,9 +32,9 @@ public class ExceptionMiddleware
                 JsonSerializer.Serialize(resposta)
             );
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
+            Console.WriteLine(ex.ToString());
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
 
