@@ -13,7 +13,8 @@ public static class ProdutoEndpoints
     {
         var produtos = await service.GetProdutos();
         return Results.Ok(produtos);
-    });
+    })
+    .RequireAuthorization();
 
     app.MapGet("/produtos/{id}", async (int id, IProdutoService service) =>
     {
@@ -24,7 +25,8 @@ public static class ProdutoEndpoints
         }
         return Results.Ok(produto);
         
-    });
+    })
+    .RequireAuthorization();
 
     app.MapPost("/produtos", async (CriarProdutoDto dto, IProdutoService service) =>
     {
@@ -48,7 +50,8 @@ public static class ProdutoEndpoints
     );
         var novoProduto = await service.AddProduto(produto);
         return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
-    });
+    })
+    .RequireAuthorization(policy => policy.RequireRole("Admin"));
     
     app.MapPut("/produtos/{id}", async (int id, AtualizarProdutoDto dto, IProdutoService service) =>
     {
@@ -79,7 +82,8 @@ public static class ProdutoEndpoints
         }
 
         return Results.Ok(produtoAtualizadoBanco);
-        });
+        })
+        .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
     app.MapPatch("/produtos/{id}", async (int id, ProdutoAtualizadoParcialmenteDto dto, IProdutoService service) =>
     {
@@ -112,7 +116,8 @@ public static class ProdutoEndpoints
 
         
         return Results.Ok(produtoAtualizado);
-    });
+    })
+    .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
     app.MapDelete("/produtos/{id}", async (int id, IProdutoService service) =>
     {
@@ -122,6 +127,7 @@ public static class ProdutoEndpoints
             return Results.NotFound();
         }
         return Results.NoContent();
-    });
+    })
+    .RequireAuthorization(policy => policy.RequireRole("Admin"));
 }
 }

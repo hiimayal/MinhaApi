@@ -19,7 +19,7 @@ public class JwtService
         var claims = new[]
         {
             new Claim("Id", usuario.Id.ToString()),
-            new Claim("Role", usuario.Role)
+            new Claim(ClaimTypes.Role, usuario.Role)
         };
         var token = new JwtSecurityToken(
         claims: claims,
