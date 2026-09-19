@@ -1,8 +1,8 @@
 using MinhaApi.Models;
 using MinhaApi.Dtos;
 using MinhaApi.Interfaces;
-using MinhaApi.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using MinhaApi.Exceptions;
 
 namespace MinhaApi.Services;
 
@@ -40,9 +40,9 @@ public class UsuarioService : IUsuarioService
 
         if (usuario == null)
         {
-            throw new Exception("E-mail ou senha inválidos.");
-        }
-
+            throw new CredenciaisInvalidasException();
+        }                                           
+                                                                    
         bool senhaCorreta = BCrypt.Net.BCrypt.Verify(
             login.Senha,
             usuario.SenhaHash
@@ -50,7 +50,7 @@ public class UsuarioService : IUsuarioService
 
         if (!senhaCorreta)
         {
-            throw new Exception("E-mail ou senha inválidos.");
+            throw new CredenciaisInvalidasException();
         }
         var token = jwtService.GerarToken(usuario);
         return new LoginResponse

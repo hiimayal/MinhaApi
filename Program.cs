@@ -28,9 +28,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Serviços da aplicação
-builder.Services.AddScoped<ProdutoService>();
-
 // Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -64,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<JwtService>();
-var chave = "uma-chave-secreta-bem-grande-1234";
+var chave = builder.Configuration["Jwt:Key"]!;
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -80,17 +77,7 @@ builder.Services
             ValidateAudience = false,
             ValidateLifetime = true
         };
-           options.Events = new JwtBearerEvents
-            {
-                OnAuthenticationFailed = context =>
-                {
-                    Console.WriteLine("ERRO JWT:");
-                    Console.WriteLine(context.Exception.Message);
-
-                    return Task.CompletedTask;
-                }
-            };
-        });
+    });
     
 
 builder.Services.AddAuthorization();

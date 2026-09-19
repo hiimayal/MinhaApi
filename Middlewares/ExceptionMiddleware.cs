@@ -32,6 +32,20 @@ public class ExceptionMiddleware
                 JsonSerializer.Serialize(resposta)
             );
         }
+        catch (CredenciaisInvalidasException)
+        {
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+
+            var resposta = new
+            {
+                erro = "E-mail ou senha inválidos."
+            };
+
+            await context.Response.WriteAsync(
+                JsonSerializer.Serialize(resposta)
+            );
+        }
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
