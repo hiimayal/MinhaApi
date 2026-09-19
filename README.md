@@ -60,6 +60,8 @@ Os endpoints de gerenciamento de produtos possuem controle de acesso baseado na 
 Requisições protegidas utilizam o token JWT através do header:
 Authorization: Bearer {token}
 
+##📂Estrutura do Projeto
+
 📂 MinhaApi
  ├── 📁 Dtos
  │   ├── 📁 Produtos
@@ -95,7 +97,42 @@ Authorization: Bearer {token}
  │
  ├── 📄 Program.cs
  ├── 📄 MinhaApi.csproj
- └── 📄 README.md
+ └── 📄 README.md📂 MinhaApi
+├── 📁 Dtos
+│   ├── 📁 Produtos
+│   └── 📁 Usuarios
+│
+├── 📁 Endpoints
+│   ├── ProdutoEndpoints.cs
+│   └── UsuarioEndpoints.cs
+│
+├── 📁 Exceptions
+│   └── EmailJaCadastradoException.cs
+│
+├── 📁 Interfaces
+│   ├── IProdutoService.cs
+│   └── IUsuarioService.cs
+│
+├── 📁 Middlewares
+│   └── ExceptionMiddleware.cs
+│
+├── 📁 Models
+│   ├── Produto.cs
+│   ├── Categoria.cs
+│   └── Usuario.cs
+│
+├── 📁 Services
+│   ├── ProdutoService.cs
+│   ├── UsuarioService.cs
+│   └── JwtService.cs
+│
+├── 📁 Migrations
+│
+├── 📁 Tests
+│
+├── 📄 Program.cs
+├── 📄 MinhaApi.csproj
+└── 📄 README.md
 
 
 🗄️ Banco de Dados
