@@ -111,36 +111,32 @@ conforme novos conceitos são aprendidos.
 📄 **Program.cs**  
 📄 **MinhaApi.csproj**  
 📄 **README.md**
-- 
 
 
-
-
-```md
 ## 🛠️ Como Executar o Projeto
-
-### 1️⃣ Clone o Repositório
+```md
+1️⃣ Clone o Repositório
 
     git clone https://github.com/hiimayal/MinhaApi.git
     cd MinhaApi
 
-### 2️⃣ Configure o Banco de Dados
+ 2️⃣ Configure o Banco de Dados
 
 Certifique-se de ter o **SQL Server** instalado e configure a connection string da aplicação.
 
-### 3️⃣ Instale as Dependências
+3️⃣ Instale as Dependências
 
     dotnet restore
 
-### 4️⃣ Execute as Migrations
+4️⃣ Execute as Migrations
 
     dotnet ef database update
 
-### 5️⃣ Execute a API
+5️⃣ Execute a API
 
     dotnet run
 
-### 6️⃣ Acesse o Swagger
+6️⃣ Acesse o Swagger
 
 Após iniciar a aplicação, acesse o endereço HTTPS exibido no terminal.
 
